@@ -25,13 +25,13 @@ def get_db():
 @router.post("/register")
 def register(user: UserCreate, db: Session = Depends(get_db)):
 
-    new_user = create_user(db, user)
+    result = create_user(db, user)
 
-    if new_user is None:
-        raise HTTPException(
-            status_code=400,
-            detail="Email already exists"
-        )
+    if result == "email_exists":
+        raise HTTPException(status_code=400, detail="Email already exists")
+
+    if result == "username_exists":
+        raise HTTPException(status_code=400, detail="Username already exists")
 
     return {
         "message": "Registration successful"

@@ -1,26 +1,25 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from app.config import settings
+from app.database import Base, engine
+from app.models.analysis import Analysis
+from app.models.chat import Chat
+from app.models.user import User
 from app.routers.auth import router as auth_router
 from app.routers.chat import router as chat_router
-from app.database import Base, engine
-from app.models.user import User
-from fastapi.middleware.cors import CORSMiddleware
-from app.models.chat import Chat
 from app.routers.daily import router as daily_router
-from app.models.analysis import Analysis
 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
-    title="EchoLens AI API",
-    version="1.0.0"
+    title="EchoLens API",
+    description="Critical thinking and perspective-taking platform",
+    version="1.0.0",
 )
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://192.168.199.10:3000",
-    ],
+    allow_origins=settings.cors_origins_list,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

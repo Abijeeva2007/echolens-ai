@@ -6,17 +6,17 @@ from app.utils.helpers import verify_password
 from app.utils.jwt_handler import create_access_token
 
 def create_user(db: Session, user: UserCreate):
+    if db.query(User).filter(User.email == user.email).first():
+        return "email_exists"
 
-    existing = db.query(User).filter(User.email == user.email).first()
-
-    if existing:
-        return None
+    if db.query(User).filter(User.username == user.username).first():
+        return "username_exists"
 
     new_user = User(
-    username=user.username,
-    email=user.email,
-    hashed_password=hash_password(user.password)   # ✅ correct
-)
+        username=user.username,
+        email=user.email,
+        hashed_password=hash_password(user.password),
+    )
 
     db.add(new_user)
     db.commit()
