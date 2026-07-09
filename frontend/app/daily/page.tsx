@@ -1,5 +1,5 @@
 "use client";
-
+import { TypeAnimation } from "react-type-animation";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -156,7 +156,7 @@ const LOADING_STEPS = [
 export default function DailyPage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
-
+  const [isLoading, setIsLoading] = useState(false);
   const [text, setText] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [loadingStep, setLoadingStep] = useState(0);
@@ -205,6 +205,7 @@ export default function DailyPage() {
     if (!text.trim()) return;
     setIsAnalyzing(true);
     setResults(null);
+    setIsLoading(true);
 
     // Find if the text matches a preset, otherwise create a mock dynamic response
     const matchedPreset = PRESETS.find(
@@ -382,11 +383,23 @@ export default function DailyPage() {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-foreground/80 leading-relaxed font-sans">
-                      {results.summary}
-                    </p>
+                    <TypeAnimation
+                      sequence={[results.summary]}
+                      wrapper="p"
+                      cursor={true}
+                      speed={85}
+                      className="text-sm text-foreground/80 leading-relaxed font-sans"
+                    />
                   </CardContent>
                 </Card>
+                <motion.div
+                      initial={{ opacity: 0, y: 25 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                          duration: 0.45,
+                          delay: 0.1
+                       }}
+                  >                
 
                 {/* 2. Bias Detection Card */}
                 <Card className="flex flex-col">

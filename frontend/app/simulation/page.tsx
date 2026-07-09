@@ -135,7 +135,7 @@ export default function SimulationPage() {
   const [isSimulating, setIsSimulating] = useState(false);
   const [simulationState, setSimulationState] = useState<"idle" | "loading" | "running" | "completed">("idle");
   const [messages, setMessages] = useState<any[]>([]);
-  const [activeMessageIdx, setActiveMessageIdx] = useState(0);
+  
   const [showReflection, setShowReflection] = useState(false);
   const [isReflecting, setIsReflecting] = useState(false);
 
@@ -266,7 +266,13 @@ export default function SimulationPage() {
       let currentIdx = 0;
       const interval = setInterval(() => {
         if (currentIdx < dialogueList.length) {
-          setMessages((prev) => [...prev, dialogueList[currentIdx]]);
+          const nextMessage = dialogueList[currentIdx];
+
+if (nextMessage) {
+  setMessages((prev) => [...prev, nextMessage]);
+}
+
+currentIdx++;
           currentIdx++;
         } else {
           clearInterval(interval);
@@ -451,7 +457,13 @@ export default function SimulationPage() {
                 )}
 
                 {messages.map((msg, idx) => {
-                  const lensInfo = LENSES.find((l) => l.id === msg.lensId);
+                  if (!msg || !msg.lensId) return null;
+
+                   const lensInfo = LENSES.find(
+  (l) => l.id === msg?.lensId
+);
+
+                   if (!lensInfo) return null;
                   return (
                     <motion.div
                       key={idx}
